@@ -1,5 +1,8 @@
 FROM golang:1.12 AS builder
 
+ENV GOOS=linux
+ENV GOARCH=amd64
+
 WORKDIR /go
 RUN go get -u google.golang.org/grpc
 RUN go get -u github.com/golang/protobuf/protoc-gen-go
@@ -11,7 +14,7 @@ RUN sh /go/src/github.com/wesen/go-microservices-tutorial/scripts/get-protoc.sh
 WORKDIR /go/src/github.com/wesen/go-microservices-tutorial/consignment-service
 RUN protoc -I. --go_out=plugins=micro:. proto/consignment/consignment.proto
 RUN GO111MODULE=on go get -u
-RUN GOOS=linux GOARCH=amd64 go build -o consignment-service main.go
+RUN go build -o consignment-service main.go
 
 FROM alpine:latest
 RUN mkdir /app
